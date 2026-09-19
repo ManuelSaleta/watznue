@@ -18,12 +18,12 @@ class RichCliFormatter:
 
     def format_digest(self, items: List[NormalizedChangeItem]) -> None:
         if not items:
-            self.console.print("\n[bold green]✓ System is fully up to date![/bold green] No pending updates found.\n")
+            self.console.print("\n[bold green]System is up to date.[/bold green] No pending updates found.\n")
             return
 
         # Header Banner
         self.console.print()
-        header = Text(" ✨ wazznue — Pending Update Digest ", style="bold white on blue")
+        header = Text(" wazznue — Pending Update Digest ", style="bold white on blue")
         self.console.print(header)
         self.console.print(f"[dim]Found {len(items)} package(s) with pending updates.[/dim]\n")
 
@@ -49,15 +49,15 @@ class RichCliFormatter:
 
             # Category Header Badge
             if cat == CategoryTier.SECURITY:
-                cat_badge = "[bold white on red] 🚨 SECURITY & CRITICAL [/bold white on red]"
+                cat_badge = "[bold white on red] [SECURITY & CRITICAL] [/bold white on red]"
             elif cat == CategoryTier.CORE:
-                cat_badge = "[bold white on dark_blue] ⚙️  CORE & SYSTEM [/bold white on dark_blue]"
+                cat_badge = "[bold white on dark_blue] [CORE & SYSTEM] [/bold white on dark_blue]"
             elif cat == CategoryTier.DESKTOP:
-                cat_badge = "[bold black on cyan] 🖥️  DESKTOP & UX [/bold black on cyan]"
+                cat_badge = "[bold black on cyan] [DESKTOP & UX] [/bold black on cyan]"
             elif cat == CategoryTier.APPLICATIONS:
-                cat_badge = "[bold white on magenta] 📦 USER APPLICATIONS [/bold white on magenta]"
+                cat_badge = "[bold white on magenta] [APPLICATIONS] [/bold white on magenta]"
             else:
-                cat_badge = f"[bold white on grey37] 📚 {cat.value.upper()} [/bold white on grey37]"
+                cat_badge = f"[bold white on grey37] [{cat.value.upper()}] [/bold white on grey37]"
 
             self.console.print(cat_badge)
 

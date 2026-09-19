@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Modular, lean update digest & changelog inspector"
 readme = "README.md"
 authors = [{ name = "gman" }]
-license = { text = "MIT" }
+license = { text = "GPL-3.0-or-later" }
 requires-python = ">=3.10"
 dependencies = [
     "rich>=13.0.0",

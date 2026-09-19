@@ -10,14 +10,15 @@
 
 - **Blazing Fast**: Caches advisory metadata locally in `~/.cache/wazznue/` for near-instant repeat execution.
 - **Signal over Noise**: Automatically classifies updates into intuitive tiers:
-  - 🚨 **Security & Critical** (CVEs, security advisories)
-  - ⚙️ **Core & System** (Kernel, systemd, PipeWire, Mesa)
-  - 🖥️ **Desktop & UX** (GNOME, Mutter, Wayland compositors)
-  - 📦 **User Applications** (Firefox, productivity apps)
-  - 📚 **Libraries & Development**
+  - **Security & Critical** (CVEs, security advisories)
+  - **Core & System** (Kernel, systemd, PipeWire, Mesa)
+  - **Desktop & UX** (GNOME, Mutter, Wayland compositors)
+  - **User Applications** (Firefox, productivity apps)
+  - **Libraries & Development**
 - **Resilient Bullet Extraction**: Cleans messy RPM specfiles and Bodhi notes into concise, readable bullet points.
 - **Multiple Output Formats**: Rich colorized terminal output, GitHub Flavored Markdown (for Obsidian/notes), and machine-readable JSON.
 - **Standalone**: Never requires `sudo` or forced DNF hooks.
+- **License**: GNU General Public License v3.0 (GPL-3.0-or-later). Any extensions or modifications must be contributed back under the same copyleft terms.
 
 ---
 
