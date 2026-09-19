@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wazznue"
+version = "0.1.0"
+description = "Modular, lean update digest & changelog inspector"
+readme = "README.md"
+authors = [{ name = "gman" }]
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = [
+    "rich>=13.0.0",
+    "httpx>=0.25.0",
+]
+
+[project.scripts]
+wazznue = "wazznue.cli:main"

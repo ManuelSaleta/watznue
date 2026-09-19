@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Entrypoint wrapper for wazznue
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# If running from bin/, project root is parent directory
+if [ -f "$SCRIPT_DIR/../.venv/bin/python3" ]; then
+    ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+    PYTHON_BIN="$ROOT_DIR/.venv/bin/python3"
+elif [ -f "$SCRIPT_DIR/.venv/bin/python3" ]; then
+    ROOT_DIR="$SCRIPT_DIR"
+    PYTHON_BIN="$ROOT_DIR/.venv/bin/python3"
+else
+    ROOT_DIR="$SCRIPT_DIR"
+    PYTHON_BIN="$(which python3)"
+fi
+
+export PYTHONPATH="$ROOT_DIR:$PYTHONPATH"
+exec "$PYTHON_BIN" -m wazznue.cli "$@"
