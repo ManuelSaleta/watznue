@@ -1,0 +1,19 @@
+[package]
+name = "wazznue-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Fast, modular CLI for wazznue update digest inspector"
+
+[[bin]]
+name = "wazznue"
+path = "src/main.rs"
+
+[dependencies]
+wazznue-core.workspace = true
+clap.workspace = true
+colored.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
