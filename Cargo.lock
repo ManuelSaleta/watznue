@@ -1360,7 +1360,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "wazznue-cli"
+name = "watznue-cli"
 version = "0.1.0"
 dependencies = [
  "clap",
@@ -1368,11 +1368,11 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
- "wazznue-core",
+ "watznue-core",
 ]
 
 [[package]]
-name = "wazznue-core"
+name = "watznue-core"
 version = "0.1.0"
 dependencies = [
  "dirs",

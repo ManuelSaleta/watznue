@@ -2,15 +2,15 @@ mod formatters;
 
 use clap::Parser;
 use formatters::{CliFormatter, JsonFormatter, MarkdownFormatter};
-use wazznue_core::detector::{get_demo_packages, PackageManagerDetector};
-use wazznue_core::models::CategoryTier;
-use wazznue_core::normalizer::ChangelogNormalizer;
-use wazznue_core::sources::SourceAggregator;
+use watznue_core::detector::{get_demo_packages, PackageManagerDetector};
+use watznue_core::models::CategoryTier;
+use watznue_core::normalizer::ChangelogNormalizer;
+use watznue_core::sources::SourceAggregator;
 
 #[derive(Parser, Debug)]
 #[command(
-    name = "wazznue",
-    about = "wazznue — Modular, lean update digest & changelog inspector.",
+    name = "watznue",
+    about = "watznue — Modular, lean update digest & changelog inspector.",
     version
 )]
 struct Args {

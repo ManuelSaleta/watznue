@@ -23,7 +23,7 @@ impl<T: Serialize + for<'de> Deserialize<'de> + Clone> DiskCache<T> {
     pub fn new(filename: &str) -> Self {
         let cache_dir = dirs::cache_dir()
             .unwrap_or_else(|| PathBuf::from("/tmp"))
-            .join("wazznue");
+            .join("watznue");
         
         let _ = fs::create_dir_all(&cache_dir);
         let cache_file = cache_dir.join(filename);

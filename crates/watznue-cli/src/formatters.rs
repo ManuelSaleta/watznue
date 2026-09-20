@@ -1,6 +1,6 @@
 use colored::Colorize;
 use std::collections::HashMap;
-use wazznue_core::models::{CategoryTier, NormalizedChangeItem, Severity};
+use watznue_core::models::{CategoryTier, NormalizedChangeItem, Severity};
 
 pub struct CliFormatter;
 
@@ -14,7 +14,7 @@ impl CliFormatter {
         println!();
         println!(
             "{}",
-            " wazznue — Pending Update Digest "
+            " watznue — Pending Update Digest "
                 .on_blue()
                 .white()
                 .bold()
@@ -105,7 +105,7 @@ pub struct MarkdownFormatter;
 impl MarkdownFormatter {
     pub fn format_digest(items: &[NormalizedChangeItem]) -> String {
         let mut lines = vec![
-            "# System Update Digest (`wazznue`)".to_string(),
+            "# System Update Digest (`watznue`)".to_string(),
             format!("*Pending updates: {} package(s)*\n", items.len()),
         ];
 

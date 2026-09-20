@@ -1,86 +1,101 @@
-# wazznue
+# watznue
 
-> **wazznue** (*"What's new?"*) — Modular, lean update digest & changelog inspector.
+> **watznue** (*"What's new?"*) — Modular, lean update digest & changelog inspector.
 
-`wazznue` inspects pending package updates on your Linux system (Fedora DNF5 / DNF4), aggregates advisory metadata from Fedora Bodhi and local updateinfo, and renders a clean, prioritized digest before you apply updates.
+`watznue` inspects pending package updates on your Linux system (Fedora DNF5 / DNF4), aggregates advisory metadata from Fedora Bodhi and local package databases, and renders a clean, prioritized digest before you apply updates.
+
+Written in pure, native Rust for sub-10ms startup, single-binary distribution, and zero runtime dependencies.
 
 ---
 
 ## Features
 
-- **Blazing Fast**: Caches advisory metadata locally in `~/.cache/wazznue/` for near-instant repeat execution.
+- **Blazing Fast**: Sub-5ms cached execution time; local disk caching in `~/.cache/watznue/`.
 - **Signal over Noise**: Automatically classifies updates into intuitive tiers:
   - **Security & Critical** (CVEs, security advisories)
   - **Core & System** (Kernel, systemd, PipeWire, Mesa)
   - **Desktop & UX** (GNOME, Mutter, Wayland compositors)
   - **User Applications** (Firefox, productivity apps)
   - **Libraries & Development**
-- **Resilient Bullet Extraction**: Cleans messy RPM specfiles and Bodhi notes into concise, readable bullet points.
-- **Multiple Output Formats**: Rich colorized terminal output, GitHub Flavored Markdown (for Obsidian/notes), and machine-readable JSON.
-- **Standalone**: Never requires `sudo` or forced DNF hooks.
-- **License**: GNU General Public License v3.0 (GPL-3.0-or-later). Any extensions or modifications must be contributed back under the same copyleft terms.
+- **Resilient Bullet Extraction**: Cleans messy RPM specfiles and Bodhi notes into concise, readable bullet points while filtering out packaging boilerplate.
+- **Multiple Output Formats**: High-contrast terminal output, GitHub Flavored Markdown (for Obsidian/notes), and structured JSON.
+- **Standalone & Unprivileged**: Runs without `sudo` or forced package manager hooks.
+- **License**: GNU General Public License v3.0 (GPL-3.0-or-later).
 
 ---
 
-## Quick Start (Python POC)
+## Installation & Build
 
-### 1. Requirements & Setup
-Python 3.10+ on Fedora Workstation.
+### Requirements
+Rust 1.75+ and Cargo.
 
 ```bash
-cd /home/gman/Projects/wazznue
-python3 -m venv .venv
-source .venv/bin/activate
-pip install rich httpx
+# Clone and build optimized release binary
+git clone https://github.com/gman/watznue.git
+cd watznue
+cargo build --release
+
+# Install to ~/.local/bin
+cargo install --path crates/watznue-cli
 ```
 
-### 2. Usage Examples
+---
+
+## Usage Examples
 
 ```bash
-# Check system pending updates (using dnf5 / dnf)
-./bin/wazznue
+# 1. Check system pending updates live (via DNF5 / DNF4)
+watznue
 
-# Preview output with realistic demo packages (even if up to date)
-./bin/wazznue --demo
+# 2. Preview digest using demo packages (even if system is up to date)
+watznue --demo
 
-# Inspect specific packages
-./bin/wazznue kernel mesa mutter firefox
+# 3. Inspect specific packages
+watznue kernel mesa mutter firefox
 
-# Filter by category or security
-./bin/wazznue --demo --category desktop
-./bin/wazznue --demo --security-only
+# 4. Filter by category or security only
+watznue --demo --category desktop
+watznue --demo --security-only
 
-# Export to Markdown (ideal for Obsidian notes)
-./bin/wazznue --demo --format markdown
+# 5. Export to Markdown (ideal for saving to Obsidian notes)
+watznue --demo --format markdown
 
-# Export to JSON
-./bin/wazznue --demo --format json
+# 6. Export to machine-readable JSON
+watznue --demo --format json
 ```
 
 ---
 
-## Project Structure
+## Workspace Structure
 
 ```
-wazznue/
-├── bin/
-│   └── wazznue             # Executable launcher script
-├── wazznue/
-│   ├── __init__.py
-│   ├── cli.py              # CLI argument parser & orchestration
-│   ├── detectors.py        # DNF5 / DNF4 package discovery
-│   ├── sources.py          # Bodhi REST API client & local cache
-│   ├── normalizer.py       # Resilient changelog cleaner & classifier
-│   ├── formatters.py       # Rich CLI, Markdown, and JSON formatters
-│   └── models.py           # Dataclasses & schema models
-├── pyproject.toml
-└── README.md
+watznue/
+├── Cargo.toml               # Cargo workspace manifest
+├── LICENSE                  # GNU General Public License v3.0
+├── README.md
+└── crates/
+    ├── watznue-core/        # Headless domain engine (library)
+    │   ├── Cargo.toml
+    │   └── src/
+    │       ├── lib.rs
+    │       ├── models.rs    # Data models & schema
+    │       ├── detector.rs  # DNF5 / DNF4 package discovery
+    │       ├── sources.rs   # Bodhi REST API client & local changelog fallback
+    │       ├── normalizer.rs# Heuristic bullet extractor & classifier
+    │       └── cache.rs     # Positive/negative disk caching
+    └── watznue-cli/         # Standalone command-line binary
+        ├── Cargo.toml
+        └── src/
+            ├── main.rs      # CLI entrypoint (clap derive)
+            └── formatters.rs# Terminal, Markdown, and JSON renderers
 ```
 
 ---
 
-## Next Evolutionary Steps
+## Roadmap
 
-1. **Rust Core (`wazznue-core`)**: Migrate engine to Rust for sub-10ms execution and zero runtime dependencies.
-2. **Interactive TUI**: Add `ratatui`-based interactive package and advisory browser.
-3. **Desktop Companion**: Optional GTK4/Libadwaita interface (`relm4`).
+- [x] **Milestone 1**: Problem validation & heuristic extraction (POC).
+- [x] **Milestone 2**: Native Rust core (`watznue-core`) & standalone CLI (`watznue-cli`).
+- [ ] **Milestone 3**: Configuration parser (`~/.config/watznue/config.toml`) & RPM packaging.
+- [ ] **Milestone 4**: Interactive terminal browser (`watznue-tui` with `ratatui`).
+- [ ] **Milestone 5**: Native GTK4/Libadwaita desktop companion (`watznue-gui` with `relm4`).

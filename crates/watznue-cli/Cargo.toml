@@ -1,17 +1,17 @@
 [package]
-name = "wazznue-cli"
+name = "watznue-cli"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
-description = "Fast, modular CLI for wazznue update digest inspector"
+description = "Fast, modular CLI for watznue update digest inspector"
 
 [[bin]]
-name = "wazznue"
+name = "watznue"
 path = "src/main.rs"
 
 [dependencies]
-wazznue-core.workspace = true
+watznue-core.workspace = true
 clap.workspace = true
 colored.workspace = true
 serde.workspace = true

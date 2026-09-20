@@ -1,10 +1,10 @@
 [package]
-name = "wazznue-core"
+name = "watznue-core"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
-description = "Core library for wazznue update digest and changelog inspector"
+description = "Core library for watznue update digest and changelog inspector"
 
 [dependencies]
 serde.workspace = true
