@@ -88,3 +88,43 @@ impl<T: Serialize + for<'de> Deserialize<'de> + Clone> DiskCache<T> {
         self.save();
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_cache_insert_and_get_positive() {
+        let mut cache: DiskCache<String> = DiskCache::new("test_cache_pos.json");
+        cache.insert("pkg_a", Some("advisory_data_123".to_string()));
+
+        let retrieved = cache.get("pkg_a");
+        assert_eq!(retrieved, Some(Some("advisory_data_123".to_string())));
+    }
+
+    #[test]
+    fn test_cache_insert_and_get_negative() {
+        let mut cache: DiskCache<String> = DiskCache::new("test_cache_neg.json");
+        cache.insert("non_existent_pkg", None);
+
+        let retrieved = cache.get("non_existent_pkg");
+        assert_eq!(retrieved, Some(None));
+    }
+
+    #[test]
+    fn test_cache_expiration() {
+        let mut cache: DiskCache<String> = DiskCache::new("test_cache_exp.json");
+        // Insert with expired timestamp (beyond 12 hours)
+        let old_timestamp = DiskCache::<String>::now_secs().saturating_sub(15 * 3600);
+        cache.entries.insert(
+            "expired_pkg".to_string(),
+            CacheEntry {
+                timestamp: old_timestamp,
+                data: Some("old_data".to_string()),
+            },
+        );
+
+        let retrieved = cache.get("expired_pkg");
+        assert_eq!(retrieved, None);
+    }
+}
