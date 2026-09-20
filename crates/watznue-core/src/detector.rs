@@ -136,3 +136,37 @@ pub fn get_demo_packages() -> Vec<PendingPackage> {
         },
     ]
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_check_update_output() {
+        let raw_output = r#"
+Updating and loading repositories:
+Repositories loaded.
+Security: kernel-core-6.10.10-200.fc40.x86_64 is a security update
+mesa-dri-drivers.x86_64               24.1.7-1.fc40                   updates
+libheif.x86_64                        1.23.4-6.fc44                   updates
+libheif.i686                          1.23.4-6.fc44                   updates
+        "#;
+
+        let detector = PackageManagerDetector {
+            pm_bin: "dnf5".to_string(),
+        };
+
+        let packages = detector.parse_check_update(raw_output);
+        assert_eq!(packages.len(), 3);
+
+        assert_eq!(packages[0].name, "mesa-dri-drivers");
+        assert_eq!(packages[0].arch, "x86_64");
+        assert_eq!(packages[0].new_version, "24.1.7-1.fc40");
+
+        assert_eq!(packages[1].name, "libheif");
+        assert_eq!(packages[1].arch, "x86_64");
+
+        assert_eq!(packages[2].name, "libheif");
+        assert_eq!(packages[2].arch, "i686");
+    }
+}

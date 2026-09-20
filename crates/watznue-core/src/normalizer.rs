@@ -217,3 +217,110 @@ impl ChangelogNormalizer {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::sources::BodhiBug;
+
+    #[test]
+    fn test_extract_bullets_sanitization() {
+        let raw_changelog = r#"
+* Fri Sep 19 2026 Packager Name <packager@fedoraproject.org> - 2.4.0-1
+- Update to upstream 2.4.0 release
+- Rebuilt for Python 3.13 mass rebuild
+### Changelog for v2.4.0
+- Add hardware acceleration for Wayland compositors
+- RPMAUTOSPEC: unresolvable merge
+- Fix race condition during service shutdown
+        "#;
+
+        let bullets = ChangelogNormalizer::extract_bullets_from_text(raw_changelog, 5);
+        assert_eq!(bullets.len(), 3);
+        assert_eq!(bullets[0], "Update to upstream 2.4.0 release");
+        assert_eq!(bullets[1], "Add hardware acceleration for Wayland compositors");
+        assert_eq!(bullets[2], "Fix race condition during service shutdown");
+    }
+
+    #[test]
+    fn test_classify_category() {
+        // Security override by CVE
+        let cves = vec!["CVE-2026-12345".to_string()];
+        assert_eq!(
+            ChangelogNormalizer::classify_category("some-lib", None, &cves),
+            CategoryTier::Security
+        );
+
+        // Security override by advisory type
+        assert_eq!(
+            ChangelogNormalizer::classify_category("glibc", Some("security"), &[]),
+            CategoryTier::Security
+        );
+
+        // Core system packages
+        assert_eq!(
+            ChangelogNormalizer::classify_category("kernel-core", None, &[]),
+            CategoryTier::Core
+        );
+        assert_eq!(
+            ChangelogNormalizer::classify_category("mesa-dri-drivers", None, &[]),
+            CategoryTier::Core
+        );
+
+        // Desktop
+        assert_eq!(
+            ChangelogNormalizer::classify_category("mutter", None, &[]),
+            CategoryTier::Desktop
+        );
+
+        // Applications
+        assert_eq!(
+            ChangelogNormalizer::classify_category("firefox", None, &[]),
+            CategoryTier::Applications
+        );
+
+        // Libraries
+        assert_eq!(
+            ChangelogNormalizer::classify_category("libsecret", None, &[]),
+            CategoryTier::Libraries
+        );
+    }
+
+    #[test]
+    fn test_normalize_cve_and_bug_extraction() {
+        let pkg = PendingPackage {
+            name: "libheif".to_string(),
+            installed_version: "1.23.0-1.fc44".to_string(),
+            new_version: "1.23.4-6.fc44".to_string(),
+            arch: "x86_64".to_string(),
+            repo: "updates".to_string(),
+        };
+
+        let bodhi = BodhiUpdate {
+            alias: Some("FEDORA-2026-64832abc".to_string()),
+            updateid: None,
+            title: Some("libheif-1.23.4-6.fc44".to_string()),
+            update_type: Some("security".to_string()),
+            severity: Some("high".to_string()),
+            notes: Some("Fixes CVE-2026-64832 and duplicate cve-2026-64832 along with CVE-2026-70628.".to_string()),
+            bugs: vec![
+                BodhiBug {
+                    bug_id: serde_json::json!(2375851),
+                    title: Some("Security flaw in libheif decoder".to_string()),
+                },
+            ],
+        };
+
+        let item = ChangelogNormalizer::normalize(&pkg, Some(&bodhi), None);
+
+        assert_eq!(item.category, CategoryTier::Security);
+        assert_eq!(item.severity, Severity::High);
+        assert_eq!(item.cves.len(), 2);
+        assert!(item.cves.contains(&"CVE-2026-64832".to_string()));
+        assert!(item.cves.contains(&"CVE-2026-70628".to_string()));
+        assert_eq!(item.bugs.len(), 1);
+        assert_eq!(item.bugs[0].bug_id, "2375851");
+        assert_eq!(item.bugs[0].url, "https://bugzilla.redhat.com/show_bug.cgi?id=2375851");
+    }
+}
+
