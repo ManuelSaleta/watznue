@@ -31,12 +31,91 @@ Rust 1.75+ and Cargo.
 
 ```bash
 # Clone and build optimized release binary
-git clone https://github.com/gman/watznue.git
+git clone https://github.com/ManuelSaleta/watznue.git
 cd watznue
 cargo build --release
 
 # Install to ~/.local/bin
 cargo install --path crates/watznue-cli
+```
+
+---
+
+## Setup: Download & Use as a Command
+
+Follow this step-by-step guide to clone the repository, build `watznue`, and configure it so the `watznue` command can be executed from anywhere in your terminal.
+
+### 1. Prerequisites
+Ensure Git and the Rust toolchain (Rust 1.75+ and Cargo) are installed:
+
+- **Fedora / RHEL**:
+  ```bash
+  sudo dnf install git cargo rust
+  ```
+- **Universal (via rustup)**:
+  ```bash
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  ```
+
+### 2. Download the Project
+Clone the repository using `git` and enter the directory:
+
+```bash
+git clone https://github.com/ManuelSaleta/watznue.git
+cd watznue
+```
+
+### 3. Setup `watznue` to Use as a Command
+
+Choose one of the following methods to install the binary to your shell `$PATH`:
+
+#### Method 1: Install via Cargo (Recommended)
+
+Install the binary directly into Cargo's binary directory:
+
+```bash
+cargo install --path crates/watznue-cli
+```
+
+> **Note:** Ensure Cargo's bin directory (`~/.cargo/bin`) is in your `$PATH`. If not already configured, add it by running:
+> ```bash
+> echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
+> source ~/.bashrc
+> ```
+
+#### Method 2: Install to `~/.local/bin` (User PATH)
+
+Modern Linux distributions (such as Fedora) include `~/.local/bin` in your `$PATH` by default:
+
+```bash
+# Option A: Using cargo install with custom root
+cargo install --path crates/watznue-cli --root ~/.local
+
+# Option B: Building release binary and copying
+cargo build --release
+mkdir -p ~/.local/bin
+cp target/release/watznue ~/.local/bin/
+```
+
+#### Method 3: System-Wide Installation
+
+To make `watznue` available for all users on the system:
+
+```bash
+cargo build --release
+sudo cp target/release/watznue /usr/local/bin/
+```
+
+### 4. Verify Command
+
+Once set up, confirm that `watznue` is available from any directory:
+
+```bash
+# Verify the binary is detected in your PATH
+which watznue
+
+# Run with demo data to test output
+watznue --demo
 ```
 
 ---
@@ -64,6 +143,92 @@ watznue --demo --format markdown
 watznue --demo --format json
 ```
 
+## Output Examples
+
+![Watznue CLI output showing categorized pending updates](docs/images/watznue-cli-output.png)
+
+### Output Text Examples
+
+```text
+Found 44 package(s) with pending updates.
+
+[CORE & SYSTEM]
+• kernel (installed -> 7.2.7-200.fc44)
+    - Revert "isofs: Drop support of directory entries straddling blocks" (Justin M. Forbes)
+    - redhat: fix builds by disabling HYPERV_MOUSE_KUNIT_TEST (Nico Pache)
+    - sched: move stack_canary to the start of the randomizable region (Scott Weaver)
+    - automotive: enable HUGETLBFS to workaround build error (Scott Weaver)
+    - fedora: arm64: enable Samsung S6E3FA7 panel driver (Sam Day)
+• kernel-core (installed -> 7.2.7-200.fc44)
+    - Revert "isofs: Drop support of directory entries straddling blocks" (Justin M. Forbes)
+    - redhat: fix builds by disabling HYPERV_MOUSE_KUNIT_TEST (Nico Pache)
+    - sched: move stack_canary to the start of the randomizable region (Scott Weaver)
+    - automotive: enable HUGETLBFS to workaround build error (Scott Weaver)
+    - fedora: arm64: enable Samsung S6E3FA7 panel driver (Sam Day)
+• kernel-devel (installed -> 7.2.7-200.fc44)
+    - Revert "isofs: Drop support of directory entries straddling blocks" (Justin M. Forbes)
+    - redhat: fix builds by disabling HYPERV_MOUSE_KUNIT_TEST (Nico Pache)
+    - sched: move stack_canary to the start of the randomizable region (Scott Weaver)
+    - automotive: enable HUGETLBFS to workaround build error (Scott Weaver)
+    - fedora: arm64: enable Samsung S6E3FA7 panel driver (Sam Day)
+• kernel-modules (installed -> 7.2.7-200.fc44)
+    - Revert "isofs: Drop support of directory entries straddling blocks" (Justin M. Forbes)
+    - redhat: fix builds by disabling HYPERV_MOUSE_KUNIT_TEST (Nico Pache)
+    - sched: move stack_canary to the start of the randomizable region (Scott Weaver)
+    - automotive: enable HUGETLBFS to workaround build error (Scott Weaver)
+    - fedora: arm64: enable Samsung S6E3FA7 panel driver (Sam Day)
+• kernel-modules-core (installed -> 7.2.7-200.fc44)
+    - Revert "isofs: Drop support of directory entries straddling blocks" (Justin M. Forbes)
+    - redhat: fix builds by disabling HYPERV_MOUSE_KUNIT_TEST (Nico Pache)
+    - sched: move stack_canary to the start of the randomizable region (Scott Weaver)
+    - automotive: enable HUGETLBFS to workaround build error (Scott Weaver)
+    - fedora: arm64: enable Samsung S6E3FA7 panel driver (Sam Day)
+• kernel-modules-extra (installed -> 7.2.7-200.fc44)
+    - Revert "isofs: Drop support of directory entries straddling blocks" (Justin M. Forbes)
+    - redhat: fix builds by disabling HYPERV_MOUSE_KUNIT_TEST (Nico Pache)
+    - sched: move stack_canary to the start of the randomizable region (Scott Weaver)
+    - automotive: enable HUGETLBFS to workaround build error (Scott Weaver)
+    - fedora: arm64: enable Samsung S6E3FA7 panel driver (Sam Day)
+• kernel-tools (installed -> 7.2.7-200.fc44)
+    - Revert "isofs: Drop support of directory entries straddling blocks" (Justin M. Forbes)
+    - redhat: fix builds by disabling HYPERV_MOUSE_KUNIT_TEST (Nico Pache)
+    - sched: move stack_canary to the start of the randomizable region (Scott Weaver)
+    - automotive: enable HUGETLBFS to workaround build error (Scott Weaver)
+    - fedora: arm64: enable Samsung S6E3FA7 panel driver (Sam Day)
+• kernel-tools-libs (installed -> 7.2.7-200.fc44)
+    - Revert "isofs: Drop support of directory entries straddling blocks" (Justin M. Forbes)
+    - redhat: fix builds by disabling HYPERV_MOUSE_KUNIT_TEST (Nico Pache)
+    - sched: move stack_canary to the start of the randomizable region (Scott Weaver)
+    - automotive: enable HUGETLBFS to workaround build error (Scott Weaver)
+    - fedora: arm64: enable Samsung S6E3FA7 panel driver (Sam Day)
+• mesa-dri-drivers (installed -> 26.2.3-1.fc44)
+    - Update to 26.2.3-1.fc44
+• mesa-dri-drivers (installed -> 26.2.3-1.fc44)
+    - Update to 26.2.3-1.fc44
+• mesa-filesystem (installed -> 26.2.3-1.fc44)
+    - Update to 26.2.3-1.fc44
+• mesa-filesystem (installed -> 26.2.3-1.fc44)
+    - Update to 26.2.3-1.fc44
+
+[APPLICATIONS]
+• code (installed -> 1.139.0-1790100890.el8)
+    - Update to 1.139.0-1790100890.el8
+
+[LIBRARIES & DEVELOPMENT]
+• python3-perf (installed -> 7.2.7-200.fc44)
+    - Revert af_alg_restrict sysctl for F43/44 (Justin M. Forbes)
+    - redhat: configs: fedora: Enable CONFIG_FIREWIRE_KUNIT_NODE_TREE_TEST for x86 (Augusto Caringi)
+    - redhat/configs/fedora: Enable dwc dual-role and ulpi phy support (Hans de Goede)
+    - redhat/configs/fedora: Enable some drivers for x86 tablets (Hans de Goede)
+
+[OTHER UPDATES]
+• aspnetcore-runtime-10.0 (installed -> 10.0.12-1.fc44)
+    - Update to .NET SDK 10.0.111 and Runtime 10.0.11
+    - Update to .NET SDK 10.0.110 and Runtime 10.0.10
+    - Update to .NET SDK 10.0.109 and Runtime 10.0.9
+    - Update to .NET SDK 10.0.108 and Runtime 10.0.8
+
+```
 ---
 
 ## Workspace Structure
@@ -99,3 +264,5 @@ watznue/
 - [ ] **Milestone 3**: Configuration parser (`~/.config/watznue/config.toml`) & RPM packaging.
 - [ ] **Milestone 4**: Interactive terminal browser (`watznue-tui` with `ratatui`).
 - [ ] **Milestone 5**: Native GTK4/Libadwaita desktop companion (`watznue-gui` with `relm4`).
+
+
