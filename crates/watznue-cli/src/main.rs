@@ -6,6 +6,8 @@ use watznue_core::detector::{get_demo_packages, PackageManagerDetector};
 use watznue_core::models::CategoryTier;
 use watznue_core::normalizer::ChangelogNormalizer;
 use watznue_core::sources::SourceAggregator;
+use watznue_core::spinner::start_loading_spinner;
+
 
 #[derive(Parser, Debug)]
 #[command(
@@ -46,6 +48,9 @@ async fn main() {
         let detector = PackageManagerDetector::new();
         detector.get_pending_packages(&args.packages)
     };
+
+    //loading animation
+    start_loading_spinner(pending.clone());
 
     if pending.is_empty() && !args.demo {
         match args.format.as_str() {

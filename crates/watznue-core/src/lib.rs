@@ -3,6 +3,7 @@ pub mod detector;
 pub mod models;
 pub mod normalizer;
 pub mod sources;
+pub mod spinner;
 
 pub use cache::DiskCache;
 pub use detector::{get_demo_packages, PackageManagerDetector};
