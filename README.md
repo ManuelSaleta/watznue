@@ -231,6 +231,29 @@ Found 44 package(s) with pending updates.
 ```
 ---
 
+## Comparison with Existing Tools
+
+Most package inspection tools either only display raw version jumps (`package 1.0 -> 1.1`), dump unfiltered packaging logs full of maintainer churn (`rebuilt for Python 3.13`, spec cleanups), or rely on slower interpreted runtimes. Written in native Rust for speed and a tiny footprint, `watznue` bridges this gap by transforming update metadata into an actionable, categorized digest.
+
+| Tool | Ecosystem | Changelog Parsing & Cleanup | Domain Tiering (Core / Desktop / Apps) | Advisory & CVE Aware | Export Formats |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`watznue`** | **Fedora (DNF5 / DNF4)** | **Yes (Heuristic bullet extraction)** | **Yes (5 categorized tiers)** | **Yes (Bodhi REST API)** | **Terminal, Markdown, JSON** |
+| `apt-listchanges` | Debian / Ubuntu | Partial (Raw Debian changelogs) | No (Severity-only filtering) | Yes (Urgency flags) | Terminal pager, Mail |
+| `dnf updateinfo` | Fedora / RHEL | No (Raw Bodhi XML) | No (Bugfix/Enhancement/Security only) | Yes (Advisory IDs / CVEs) | Verbose terminal text |
+| `nvd` | NixOS | No (Version / closure size diff) | Partial (By dependency closure) | No | Terminal diff |
+| `rpm-ostree db diff` | Fedora Atomic | No (Raw RPM changelog) | No | No | Terminal text |
+| `tui-update` | DNF / Pacman / APT | No (Version jumps only) | No (By repository) | Partial | Interactive TUI |
+
+### Why is `watznue` Different?
+
+- **Speed & Minimal Footprint (Pure Rust):** Many package tools and DNF plugins rely on interpreted Python runtimes with noticeable startup overhead and dependency bloat. `watznue` is compiled to a standalone native Rust binary delivering sub-10ms execution, a minimal memory and binary footprint, zero runtime dependencies, and positive/negative disk caching—running completely unprivileged without `sudo`.
+- **Signal Over Noise:** Traditional commands like `dnf changelog` dump hundreds of lines of spec file churn. `watznue` strips packaging boilerplate (rebuild notices, commit hashes, maintainer email signatures) to isolate user-relevant release bullets.
+- **Domain-Aware Classification:** Updates are automatically categorized into intuitive tiers (`[CORE & SYSTEM]`, `[DESKTOP & UX]`, `[APPLICATIONS]`, etc.). You can immediately spot whether an update touches critical low-level components (Kernel, Mesa, systemd), impacts your desktop session (Mutter, Wayland), or is just an isolated user application.
+- **Bodhi REST API Integration:** Instead of relying solely on local RPM spec files, `watznue` queries Fedora Bodhi directly for official update descriptions and security advisories, falling back to local changelogs when offline.
+- **Documentation Ready:** Built-in Markdown export (`--format markdown`) is specifically formatted for note-taking systems (such as Obsidian) and changelog tracking, while JSON export enables easy shell scripting.
+
+---
+
 ## Workspace Structure
 
 ```
