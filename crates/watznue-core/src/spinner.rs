@@ -2,24 +2,24 @@ use std::io::{self, Write};
 use std::thread::sleep;
 use std::time::Duration;
 
-use crate::PendingPackage;
-
 /*
 Simple loading spinner
 */
-pub fn start_loading_spinner(pending:Vec<PendingPackage>){
-    let mut index = 0;
-    //TODO: make a cuter spinner
+pub fn start_loading_spinner<F>(mut is_fetching_pkgs: F)
+where
+    F: FnMut() -> bool,
+{
     let frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-    while pending.is_empty() {
+    let mut index = 0;
+
+    while is_fetching_pkgs() {
         let spinner = frames[index % frames.len()];
-        print!("\rFetching {spinner}");
+        print!("\rFetching {spinner} ");
         let _ = io::stdout().flush();
         index += 1;
-        sleep(Duration::from_millis(100));
-
-        if !pending.is_empty() {
-            break;
-        }
+        sleep(Duration::from_millis(80));
     }
+
+    print!("\r\x1B[2K");
+    let _ = io::stdout().flush();
 }
