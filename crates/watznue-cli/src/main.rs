@@ -42,15 +42,23 @@ async fn main() {
     let args = Args::parse();
 
     // 1. Detect pending packages
-    let pending = if args.demo {
-        get_demo_packages()
-    } else {
-        let detector = PackageManagerDetector::new();
-        detector.get_pending_packages(&args.packages)
-    };
+    let demo = args.demo;
+    let packages = args.packages.clone();
+    let pending_worker = std::thread::spawn(move || {
+        if demo {
+            get_demo_packages()
+        } else {
+            let detector = PackageManagerDetector::new();
+            detector.get_pending_packages(&packages)
+        }
+    });
 
-    //loading animation
-    start_loading_spinner(pending.clone());
+    // loading animation
+    start_loading_spinner(|| !pending_worker.is_finished());
+
+    let pending = pending_worker
+        .join()
+        .unwrap_or_else(|_| Vec::new());
 
     if pending.is_empty() && !args.demo {
         match args.format.as_str() {
