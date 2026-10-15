@@ -9,7 +9,16 @@ pub fn start_loading_spinner<F>(mut is_fetching_pkgs: F)
 where
     F: FnMut() -> bool,
 {
-    let frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+    let frames = [
+        r"\[^-^]/",
+        r"-[^-^]/",
+        r"/[^-^]/",
+        r"/[^-^]-",
+        r"/[@_<]\",
+        r"-[^-^]\",
+        r"\[^-^]\",
+        r"\[^-^]-",
+    ];
     let mut index = 0;
 
     while is_fetching_pkgs() {

@@ -41,25 +41,77 @@ struct Args {
 async fn main() {
     let args = Args::parse();
 
-    // 1. Detect pending packages
+    // 1. Detect pending packages & normalize changes in worker thread
     let demo = args.demo;
     let packages = args.packages.clone();
+    let security_only = args.security_only;
+    let category = args.category.clone();
+    let handle = tokio::runtime::Handle::current();
+
     let pending_worker = std::thread::spawn(move || {
-        if demo {
+        let pending = if demo {
             get_demo_packages()
         } else {
             let detector = PackageManagerDetector::new();
             detector.get_pending_packages(&packages)
+        };
+
+        if pending.is_empty() && !demo {
+            return (pending, Vec::new());
         }
+
+        // 2. Aggregate sources & normalize
+        let normalized_items = handle.block_on(async {
+            let mut aggregator = SourceAggregator::new();
+            let mut items = Vec::new();
+
+            for pkg in &pending {
+                let bodhi_data = aggregator.fetch_bodhi_update(&pkg.name).await;
+
+                let local_changelog = if bodhi_data.as_ref().and_then(|b| b.notes.as_ref()).is_none() {
+                    aggregator.fetch_rpm_changelog(&pkg.name, 25)
+                } else {
+                    None
+                };
+
+                let item = ChangelogNormalizer::normalize(pkg, bodhi_data.as_ref(), local_changelog.as_deref());
+
+                // Apply filters
+                if security_only && item.category != CategoryTier::Security {
+                    continue;
+                }
+
+                if let Some(ref cat_filter) = category {
+                    let target_cat = match cat_filter.to_lowercase().as_str() {
+                        "security" => CategoryTier::Security,
+                        "core" => CategoryTier::Core,
+                        "desktop" => CategoryTier::Desktop,
+                        "apps" => CategoryTier::Applications,
+                        "libs" => CategoryTier::Libraries,
+                        _ => CategoryTier::Other,
+                    };
+                    if item.category != target_cat {
+                        continue;
+                    }
+                }
+
+                items.push(item);
+            }
+
+            items
+        });
+
+        (pending, normalized_items)
     });
 
     // loading animation
     start_loading_spinner(|| !pending_worker.is_finished());
 
-    let pending = pending_worker
+    let (pending, normalized_items) = pending_worker
         .join()
-        .unwrap_or_else(|_| Vec::new());
+        .unwrap_or_else(|_| (Vec::new(), Vec::new()));
 
+    // 3. Render output
     if pending.is_empty() && !args.demo {
         match args.format.as_str() {
             "json" => println!("{}", JsonFormatter::format_digest(&[])),
@@ -69,44 +121,6 @@ async fn main() {
         return;
     }
 
-    // 2. Aggregate sources & normalize
-    let mut aggregator = SourceAggregator::new();
-    let mut normalized_items = Vec::new();
-
-    for pkg in &pending {
-        let bodhi_data = aggregator.fetch_bodhi_update(&pkg.name).await;
-
-        let local_changelog = if bodhi_data.as_ref().and_then(|b| b.notes.as_ref()).is_none() {
-            aggregator.fetch_rpm_changelog(&pkg.name, 25)
-        } else {
-            None
-        };
-
-        let item = ChangelogNormalizer::normalize(pkg, bodhi_data.as_ref(), local_changelog.as_deref());
-
-        // Apply filters
-        if args.security_only && item.category != CategoryTier::Security {
-            continue;
-        }
-
-        if let Some(ref cat_filter) = args.category {
-            let target_cat = match cat_filter.to_lowercase().as_str() {
-                "security" => CategoryTier::Security,
-                "core" => CategoryTier::Core,
-                "desktop" => CategoryTier::Desktop,
-                "apps" => CategoryTier::Applications,
-                "libs" => CategoryTier::Libraries,
-                _ => CategoryTier::Other,
-            };
-            if item.category != target_cat {
-                continue;
-            }
-        }
-
-        normalized_items.push(item);
-    }
-
-    // 3. Render output
     match args.format.as_str() {
         "json" => println!("{}", JsonFormatter::format_digest(&normalized_items)),
         "markdown" => println!("{}", MarkdownFormatter::format_digest(&normalized_items)),
