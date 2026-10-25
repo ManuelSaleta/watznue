@@ -27,6 +27,7 @@ Written in pure, native Rust for sub-10ms startup, single-binary distribution, a
 ## Installation & Build
 
 ### Requirements
+
 Rust 1.99+ (Edition 2024) and Cargo.
 
 ```bash
@@ -46,18 +47,23 @@ cargo install --path crates/watznue-cli
 Follow this step-by-step guide to clone the repository, build `watznue`, and configure it so the `watznue` command can be executed from anywhere in your terminal.
 
 ### 1. Prerequisites
+
 Ensure Git and the Rust toolchain (Rust 1.99+ and Cargo) are installed:
 
 - **Fedora / RHEL**:
+
   ```bash
   sudo dnf install git cargo rust
   ```
+
 - **Universal (via rustup)**:
+
   ```bash
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
   ```
 
 ### 2. Download the Project
+
 Clone the repository using `git` and enter the directory:
 
 ```bash
@@ -78,6 +84,7 @@ cargo install --path crates/watznue-cli
 ```
 
 > **Note:** Ensure Cargo's bin directory (`~/.cargo/bin`) is in your `$PATH`. If not already configured, add it by running:
+>
 > ```bash
 > echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
 > source ~/.bashrc
@@ -229,6 +236,7 @@ Found 44 package(s) with pending updates.
     - Update to .NET SDK 10.0.108 and Runtime 10.0.8
 
 ```
+
 ---
 
 ## Workspace Structure
@@ -264,5 +272,3 @@ watznue/
 - [ ] **Milestone 3**: Configuration parser (`~/.config/watznue/config.toml`) & RPM packaging.
 - [ ] **Milestone 4**: Interactive terminal browser (`watznue-tui` with `ratatui`).
 - [ ] **Milestone 5**: Native GTK4/Libadwaita desktop companion (`watznue-gui` with `relm4`).
-
-
