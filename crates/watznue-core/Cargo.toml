@@ -2,6 +2,7 @@
 name = "watznue-core"
 version.workspace = true
 edition.workspace = true
+rust-version.workspace = true
 authors.workspace = true
 license.workspace = true
 description = "Core library for watznue update digest and changelog inspector"

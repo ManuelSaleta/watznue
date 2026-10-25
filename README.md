@@ -27,7 +27,7 @@ Written in pure, native Rust for sub-10ms startup, single-binary distribution, a
 ## Installation & Build
 
 ### Requirements
-Rust 1.75+ and Cargo.
+Rust 1.99+ (Edition 2024) and Cargo.
 
 ```bash
 # Clone and build optimized release binary
@@ -46,7 +46,7 @@ cargo install --path crates/watznue-cli
 Follow this step-by-step guide to clone the repository, build `watznue`, and configure it so the `watznue` command can be executed from anywhere in your terminal.
 
 ### 1. Prerequisites
-Ensure Git and the Rust toolchain (Rust 1.75+ and Cargo) are installed:
+Ensure Git and the Rust toolchain (Rust 1.99+ and Cargo) are installed:
 
 - **Fedora / RHEL**:
   ```bash

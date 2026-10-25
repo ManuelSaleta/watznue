@@ -5,23 +5,29 @@ use std::time::Duration;
 /*
 Simple loading spinner
 */
-pub fn start_loading_spinner<F>(mut is_fetching_pkgs: F)
+pub fn start_loading_spinner<F>(mut is_fetching_updates: F)
 where
     F: FnMut() -> bool,
 {
     let frames = [
-        r"\[^-^]/",
-        r"-[^-^]/",
-        r"/[^-^]/",
-        r"/[^-^]-",
-        r"/[@_<]\",
-        r"-[^-^]\",
-        r"\[^-^]\",
-        r"\[^-^]-",
+        r"  `~[^-^]~' ",
+        r" ,~-[^-^]-~'",
+        r" ,--[^-^]--<",
+        r"  ,-[^-^]-< ",
+        r"  ,~[^-^]~< ",
+        r"   /[^-^]/  ",
+        r"   /[@_<]-< ",
+        r"   /[^-^]~` ",
+        r"  /-[^-^]-~`",
+        r" >--[^-^]--'",
+        r"  \-[^-^]-\ ",
+        r"   \[^-^]\  ",
+        r"  `~[^-^]-\ ",
+        r"  `~[^-^]-~ ",
     ];
     let mut index = 0;
 
-    while is_fetching_pkgs() {
+    while is_fetching_updates() {
         let spinner = frames[index % frames.len()];
         print!("\rFetching {spinner} ");
         let _ = io::stdout().flush();
@@ -32,3 +38,4 @@ where
     print!("\r\x1B[2K");
     let _ = io::stdout().flush();
 }
+
